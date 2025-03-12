@@ -32,5 +32,5 @@ func (us_c *UpdateMascotaController) Execute(c *gin.Context) {
 		c.JSON(500, gin.H{"error": "No se pudo actualizar la mascota"})
 		return
 	}
-	c.JSON(200, gin.H{"message": "Mascota actualizado"})
+	c.JSON(200, gin.H{"message": "Mascota actualizada"})
 }

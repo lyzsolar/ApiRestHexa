@@ -11,30 +11,32 @@ type MySQL struct {
 	conn *core.Conn_MySQL
 }
 
-func NewMySQL() *MySQL {
+func NewMySQL() (*MySQL, error) {
 	conn := core.GetDBPool()
 	if conn.Err != "" {
-		log.Fatal("Error al configurar el pool de conexiones: %v", conn.Err)
+		return nil, fmt.Errorf("error al configurar el pool de conexiones: %v", conn.Err)
 	}
-	return &MySQL{conn: conn}
+	return &MySQL{conn: conn}, nil
 }
 
-func (mysql *MySQL) Save(mascota entities.Mascotas) error {
+func (mysql *MySQL) Save(mascota entities.Mascotas) (entities.Mascotas, error) {
 	query := "INSERT INTO Mascota (name_mascota, breed_mascota) VALUES (?, ?)"
 	result, err := mysql.conn.ExecutePreparedQuery(query, mascota.Name, mascota.Breed)
 	if err != nil {
-		return fmt.Errorf("error al ejecutar la consulta: %v", err)
+		return entities.Mascotas{}, fmt.Errorf("error al ejecutar la consulta: %v", err)
 	}
 
 	rowsAffected, _ := result.RowsAffected()
 	if rowsAffected == 1 {
 		log.Printf("[MySQL] - Filas afectadas: %d", rowsAffected)
+		mascota.ID = int(rowsAffected)
 	}
-	return nil
+
+	return mascota, nil
 }
 
 func (mysql *MySQL) GetAll() ([]entities.Mascotas, error) {
-	query := "SELECT id_mascota, name_mascota, breed_mascota  FROM Mascota"
+	query := "SELECT id_mascota, name_mascota, breed_mascota FROM Mascota"
 	rows, err := mysql.conn.FetchRows(query)
 	if err != nil {
 		return nil, fmt.Errorf("error al obtener filas: %v", err)

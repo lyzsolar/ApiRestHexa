@@ -16,7 +16,7 @@ type RabbitMQAdapter struct {
 var _ repository.IMessageService = (*RabbitMQAdapter)(nil)
 
 func NewRabbitMQAdapter() (*RabbitMQAdapter, error) {
-	conn, err := amqp.Dial("amqp://solar:solar@107.23.66.138:5672/")
+	conn, err := amqp.Dial("")
 	if err != nil {
 		log.Println("Error connecting to RabbitMQ:", err)
 		return nil, err

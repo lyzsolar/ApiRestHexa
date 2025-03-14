@@ -6,6 +6,7 @@ import (
 	"github.com/goccy/go-json"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"log"
+	"net/url"
 )
 
 type RabbitMQAdapter struct {
@@ -16,7 +17,10 @@ type RabbitMQAdapter struct {
 var _ repository.IMessageService = (*RabbitMQAdapter)(nil)
 
 func NewRabbitMQAdapter() (*RabbitMQAdapter, error) {
-	conn, err := amqp.Dial("")
+	password := url.QueryEscape("")
+	connStr := "" + password + ""
+
+	conn, err := amqp.Dial(connStr)
 	if err != nil {
 		log.Println("Error connecting to RabbitMQ:", err)
 		return nil, err
